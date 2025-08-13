@@ -12,11 +12,6 @@ export default function SideBar({setMobileMenuOpen}){
     const { signOut } = useSignOut()
     const navigate = useNavigate();
     const { loading, error, data } = useSubscription(CHAT_LIST);
-    if (loading) console.log("Loading chats...");
-    if (error) {
-        console.error("Error loading chats:", error);
-        
-    }
     
     const logoutHandler = () => {
         signOut();
