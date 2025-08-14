@@ -31,7 +31,7 @@ export default function SideBar({setMobileMenuOpen}){
                     />
                 </div>
                 <div className="flex gap-2 items-center hover:bg-gray-200 p-2 rounded-xl cursor-pointer"
-                    onClick={() => navigate("/")}
+                    onClick={() => {setMobileMenuOpen(false); navigate("/")}}
                 >
                     <LuSquarePen className="text-lg" />
                     <div>New chat</div>
