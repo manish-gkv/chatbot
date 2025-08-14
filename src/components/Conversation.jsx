@@ -12,7 +12,8 @@ export default function Conversation() {
     const location = useLocation();
     const navigate = useNavigate();
     const [message, setMessage] = useState("");
-    const [responseId, setResponseId] = useState(null);
+    const [responseId, setResponseId] = useState(localStorage.getItem("responseId") || "");
+    console.log(responseId);
     const { conversationId } = useParams();
     const [send_message, {loading:sendingMessage}] = useMutation(SEND_MESSAGE);
     const accessToken = useAccessToken();
@@ -35,16 +36,20 @@ export default function Conversation() {
         setResponseId(data.send_message.id);
     };
     useEffect(() => {
-  if (location.state?.autoMessage) {
-    send_message({ variables: {
-        chat_id: String(conversationId),
-        content: String(location.state.autoMessage).trim(),
-        role: "user",
-        accessToken: accessToken
-     } });
-    navigate(location.pathname, { replace: true, state: {} });
-  }
-}, [location]);
+        const sendAutoMessage = async () => {
+            if (location.state?.autoMessage) {
+                const { data } = await send_message({ variables: {
+                    chat_id: String(conversationId),
+                    content: String(location.state.autoMessage).trim(),
+                    role: "user",
+                    accessToken: accessToken
+                } });
+                localStorage.setItem("responseId", data.send_message.id);
+                navigate(location.pathname, { replace: true, state: {} });
+            }
+        };
+        sendAutoMessage();
+    }, [location]);
     return (
         <>
             <div className="relative px-4 h-full pb-4 z-0">
