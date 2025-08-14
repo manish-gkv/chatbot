@@ -17,7 +17,7 @@ export default function Conversation() {
     const chatHistory = data?.messages || [];
 
     const sendButtonHandler = async () => {
-        
+        if (sendingMessage) return;
         send_message({
             variables: {
                 chat_id: String(conversationId),
@@ -62,11 +62,9 @@ export default function Conversation() {
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                             />
-                            <div className="flex justify-end">
-                                <IoSend className="text-2xl cursor-pointer hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" 
-                                onClick={sendButtonHandler}
-                                disabled={loading}
-                            />
+                            <div className="flex justify-end disabled:opacity-50 disabled:cursor-not-allowed" onClick={sendButtonHandler}
+                                disabled={loading}>
+                                <IoSend className="text-2xl cursor-pointer hover:text-gray-800 " />
                             </div>
                         </div>
 

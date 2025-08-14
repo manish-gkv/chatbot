@@ -12,6 +12,7 @@ export default function NewChat(){
     const navigate = useNavigate();
     const accessToken = useAccessToken();
     const sendButtonHandler = async () => {
+        if(creatingChat || sendingMessage) return;
         if (!message.trim()) {
             toast.error("Message cannot be empty");
             return;
@@ -58,10 +59,9 @@ export default function NewChat(){
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                             />
-                            <button className="flex justify-end">
+                            <button className="flex justify-end" onClick={sendButtonHandler}
+                                disabled={creatingChat || sendingMessage}>
                                 <IoSend className="text-2xl cursor-pointer hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" 
-                                onClick={sendButtonHandler}
-                                disabled={creatingChat || sendingMessage}
                                 />
                             </button>
                         </div>
