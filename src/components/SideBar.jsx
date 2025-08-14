@@ -11,7 +11,7 @@ export default function SideBar({setMobileMenuOpen}){
     const userEmail = useUserEmail();
     const { signOut } = useSignOut()
     const navigate = useNavigate();
-    const { loading, error, data } = useSubscription(CHAT_LIST);
+    const { data } = useSubscription(CHAT_LIST);
     
     const logoutHandler = () => {
         signOut();

@@ -13,7 +13,6 @@ export default function Conversation() {
     const navigate = useNavigate();
     const [message, setMessage] = useState("");
     const [responseId, setResponseId] = useState(localStorage.getItem("responseId") || "");
-    localStorage.removeItem("responseId");
     const { conversationId } = useParams();
     const [send_message, {loading:sendingMessage}] = useMutation(SEND_MESSAGE);
     const accessToken = useAccessToken();
@@ -34,6 +33,7 @@ export default function Conversation() {
         });
         setMessage("");
         setResponseId(data.send_message.id);
+        localStorage.setItem("responseId", data.send_message.id);
     };
     useEffect(() => {
         const sendAutoMessage = async () => {
