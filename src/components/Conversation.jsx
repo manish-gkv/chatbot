@@ -12,7 +12,7 @@ export default function Conversation() {
     const location = useLocation();
     const navigate = useNavigate();
     const [message, setMessage] = useState("");
-    const [responseId, setResponseId] = useState(localStorage.getItem("responseId") || "");
+    const [responseId, setResponseId] = useState(location.state?.responseId || null);
     const { conversationId } = useParams();
     const [send_message, {loading:sendingMessage}] = useMutation(SEND_MESSAGE);
     const accessToken = useAccessToken();
@@ -20,7 +20,6 @@ export default function Conversation() {
         variables: { chat_id: String(conversationId) }
     });
     const chatHistory = data?.messages || [];
-    console.log(responseId);
     const sendButtonHandler = async () => {
         if (sendingMessage) return;
         const { data } = await send_message({
@@ -43,9 +42,7 @@ export default function Conversation() {
                     role: "user",
                     accessToken: accessToken
                 } });
-                localStorage.setItem("responseId", data.send_message.id);
-                console.log("Auto message sent:", data.send_message);
-                navigate(location.pathname, { replace: true, state: {} });
+                navigate(location.pathname, { replace: true, state: {responseId: data.send_message.id} });
             }
         };
         sendAutoMessage();
