@@ -40,7 +40,7 @@ export default function SideBar({setMobileMenuOpen}){
                 <div className="flex flex-col h-100 md:min-h-110 max-h-100 overflow-y-scroll">
                     {data?.chats.map((chat, index) => (
                         <div key={index} className="flex gap-2 items-center hover:bg-gray-200 p-2 rounded-xl cursor-pointer"
-                            onClick={() => navigate(`/c/${chat.id}`)}
+                            onClick={() => {setMobileMenuOpen(false); navigate(`/c/${chat.id}`)}}
                         >
                             {chat?.name}
                         </div>
