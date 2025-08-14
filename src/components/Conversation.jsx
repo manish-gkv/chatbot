@@ -30,8 +30,6 @@ export default function Conversation() {
         });
         setMessage("");
         setResponseId(data.send_message.id);
-        console.log("Message sent successfully:", data.send_message.id);
-        console.log(chatHistory);
     };
     return (
         <>
@@ -43,11 +41,10 @@ export default function Conversation() {
                                 <div className={`flex w-full justify-${message.role==='user'?"end ":"start"}`}
                                     key={message.id}
                                 >
-                                    <div className={`w-fit ${message.role==='user'?"bg-gray-200 py-1 px-4 rounded-full":""}`}>
+                                    <div className={`w-fit max-w-full ${message.role==='user'?"bg-gray-200 py-1 px-4 rounded-full":""}`}>
                                         {message.role === "user" ? (message.content) : (
                                             <StreamingMarkdown text={message.content} stream={responseId===message.id} />
                                         )}
-                                        {console.log(message)}
                                     </div>
                                 </div>
                             )
