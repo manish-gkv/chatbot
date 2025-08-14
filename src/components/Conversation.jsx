@@ -20,7 +20,7 @@ export default function Conversation() {
         variables: { chat_id: String(conversationId) }
     });
     const chatHistory = data?.messages || [];
-
+    console.log(responseId);
     const sendButtonHandler = async () => {
         if (sendingMessage) return;
         const { data } = await send_message({
@@ -33,7 +33,6 @@ export default function Conversation() {
         });
         setMessage("");
         setResponseId(data.send_message.id);
-        localStorage.setItem("responseId", data.send_message.id);
     };
     useEffect(() => {
         const sendAutoMessage = async () => {
@@ -45,6 +44,7 @@ export default function Conversation() {
                     accessToken: accessToken
                 } });
                 localStorage.setItem("responseId", data.send_message.id);
+                console.log("Auto message sent:", data.send_message);
                 navigate(location.pathname, { replace: true, state: {} });
             }
         };
