@@ -13,7 +13,7 @@ export default function Conversation() {
     const navigate = useNavigate();
     const [message, setMessage] = useState("");
     const [responseId, setResponseId] = useState(localStorage.getItem("responseId") || "");
-    console.log(responseId);
+    localStorage.removeItem("responseId");
     const { conversationId } = useParams();
     const [send_message, {loading:sendingMessage}] = useMutation(SEND_MESSAGE);
     const accessToken = useAccessToken();
