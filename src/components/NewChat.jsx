@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { IoSend } from "react-icons/io5";
 import { useMutation} from '@apollo/client';
-import { useAccessToken } from "@nhost/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import {CREATE_CHAT, SEND_MESSAGE} from "../graphql/mutations";
+import {CREATE_CHAT} from "../graphql/mutations";
 export default function NewChat(){
     const [message, setMessage] = useState("");
     const [createChat, { loading:creatingChat, error }] = useMutation(CREATE_CHAT);
-    const [sendMessage, {loading:sendingMessage}] = useMutation(SEND_MESSAGE);
     const navigate = useNavigate();
-    const accessToken = useAccessToken();
     const sendButtonHandler = async () => {
         if(creatingChat || sendingMessage) return;
         if (!message.trim()) {
@@ -22,24 +19,7 @@ export default function NewChat(){
                 name: message.trim().substring(0, 25)
             }
         });
-        if (!creatingChat) {
-            const { data2 } = await sendMessage({
-                variables: {
-                    chat_id: data.insert_chats_one.id,
-                    content: message.trim(),
-                    role: "user",
-                    accessToken: accessToken
-                }
-            });
-            console.log("Chat created successfully:", data2);
-            setMessage("");
-            navigate(`/c/${data.insert_chats_one.id}`);
-
-        }
-        if (error) {
-            console.log("Failed to create chat:", error);
-            toast.error("Failed to create chat", error.message || "");
-        }
+        navigate(`/c/${data.insert_chats_one.id}`, { state: { autoMessage: message } });
     };
     return (
         <>

@@ -3,11 +3,14 @@ import { IoSend } from "react-icons/io5";
 import { useSubscription, useMutation } from "@apollo/client";
 import { MESSAGES } from "../graphql/subscription";
 import { SEND_MESSAGE } from "../graphql/mutations";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAccessToken } from "@nhost/react";
 import AIResponseShimmer from "./AIResponseShimmer";
 import StreamingMarkdown from "./StreamingMarkdown";
+import { useLocation, useNavigate } from "react-router-dom";
 export default function Conversation() {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [message, setMessage] = useState("");
     const [responseId, setResponseId] = useState(null);
     const { conversationId } = useParams();
@@ -31,6 +34,17 @@ export default function Conversation() {
         setMessage("");
         setResponseId(data.send_message.id);
     };
+    useEffect(() => {
+  if (location.state?.autoMessage) {
+    send_message({ variables: {
+        chat_id: String(conversationId),
+        content: String(location.state.autoMessage).trim(),
+        role: "user",
+        accessToken: accessToken
+     } });
+    navigate(location.pathname, { replace: true, state: {} });
+  }
+}, [location]);
     return (
         <>
             <div className="relative px-4 h-full pb-4 z-0">
