@@ -5,9 +5,11 @@ import { MESSAGES } from "../graphql/subscription";
 import { SEND_MESSAGE } from "../graphql/mutations";
 import { useState } from "react";
 import { useAccessToken } from "@nhost/react";
-import Markdown from "react-markdown";
+import AIResponseShimmer from "./AIResponseShimmer";
+import StreamingMarkdown from "./StreamingMarkdown";
 export default function Conversation() {
     const [message, setMessage] = useState("");
+    const [responseId, setResponseId] = useState(null);
     const { conversationId } = useParams();
     const [send_message, {loading:sendingMessage}] = useMutation(SEND_MESSAGE);
     const accessToken = useAccessToken();
@@ -18,7 +20,7 @@ export default function Conversation() {
 
     const sendButtonHandler = async () => {
         if (sendingMessage) return;
-        send_message({
+        const { data } = await send_message({
             variables: {
                 chat_id: String(conversationId),
                 content: String(message).trim(),
@@ -27,7 +29,9 @@ export default function Conversation() {
             }
         });
         setMessage("");
-        
+        setResponseId(data.send_message.id);
+        console.log("Message sent successfully:", data.send_message.id);
+        console.log(chatHistory);
     };
     return (
         <>
@@ -40,13 +44,16 @@ export default function Conversation() {
                                     key={message.id}
                                 >
                                     <div className={`w-fit ${message.role==='user'?"bg-gray-200 py-1 px-4 rounded-full":""}`}>
-                                        <Markdown>{message.content}</Markdown>
+                                        {message.role === "user" ? (message.content) : (
+                                            <StreamingMarkdown text={message.content} stream={responseId===message.id} />
+                                        )}
+                                        {console.log(message)}
                                     </div>
                                 </div>
                             )
                         })
                     }
-                    {sendingMessage && <div className="text-center text-gray-500">Waiting for response from AI...</div>}
+                    {sendingMessage && <AIResponseShimmer />}
                 </div>
                 <div className="absolute inset-x-4 bottom-0 bg-white ">
                     <div className="flex p-4 mx-auto max-w-2xl w-full overflow-hidden">
