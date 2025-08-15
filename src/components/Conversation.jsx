@@ -54,7 +54,7 @@ export default function Conversation() {
                     {
                         chatHistory.map((message)=>{
                             return(
-                                <div className={`flex w-full justify-${message.role==='user'?"end ":"start"}`}
+                                <div className={`flex w-full text-wrap justify-${message.role==='user'?"end ":"start"}`}
                                     key={message.id}
                                 >
                                     <div className={`w-fit max-w-full ${message.role==='user'?"bg-gray-200 py-1 px-4 rounded-full":""}`}>
