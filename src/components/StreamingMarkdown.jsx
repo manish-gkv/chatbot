@@ -1,14 +1,37 @@
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import remarkBreaks from "remark-breaks";
+import remarkSmartypants from "remark-smartypants";
+// import rehypeRaw from "rehype-raw"; // Uncomment to allow raw HTML (use with caution)
+import "katex/dist/katex.min.css";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export default function StreamingMarkdown({ text, stream = false }) {
-  const [displayedText, setDisplayedText] = useState(stream ? "" : text);
+  // Preprocess to support both $...$/$$...$$ and \(...\)/\[...\] delimiters
+  function preprocessMath(md) {
+    if (!md) return md;
+    // Split by code blocks (```...```)
+    const parts = md.split(/(```[\s\S]*?```)/g);
+    for (let i = 0; i < parts.length; i++) {
+      // Only preprocess non-code parts
+      if (!parts[i].startsWith("```") && !parts[i].endsWith("```")) {
+        // Replace \\[...\\] with $$...$$ (block math)
+        parts[i] = parts[i].replace(/\\\[(.+?)\\\]/gs, (m, p1) => `$$${p1}$$`);
+        // Replace \\(...\\) with $...$ (inline math)
+        parts[i] = parts[i].replace(/\\\((.+?)\\\)/gs, (m, p1) => `$${p1}$`);
+      }
+    }
+    return parts.join("");
+  }
+  const processedText = preprocessMath(text);
+  const [displayedText, setDisplayedText] = useState(stream ? "" : processedText);
 
   useEffect(() => {
-    if (!text) return;
+    if (!processedText) return;
 
     if (stream) {
       setDisplayedText("");
@@ -16,17 +39,17 @@ export default function StreamingMarkdown({ text, stream = false }) {
       let chunkSize = 3; // Number of characters per frame
 
       function step() {
-        setDisplayedText((prev) => prev + text.slice(i, i + chunkSize));
+        setDisplayedText((prev) => prev + processedText.slice(i, i + chunkSize));
         i += chunkSize;
-        if (i < text.length) {
+        if (i < processedText.length) {
           requestAnimationFrame(step);
         }
       }
       requestAnimationFrame(step);
     } else {
-      setDisplayedText(text);
+      setDisplayedText(processedText);
     }
-  }, [text, stream]);
+  }, [processedText, stream]);
 
   const CodeBlock = ({ inline, className, children }) => {
     const match = /language-(\w+)/.exec(className || "");
@@ -69,7 +92,8 @@ export default function StreamingMarkdown({ text, stream = false }) {
       <div className="bg-white rounded-2xl p-6 text-gray-800 leading-relaxed">
         <ReactMarkdown
           children={displayedText}
-          remarkPlugins={[remarkGfm]}
+          remarkPlugins={[remarkGfm, remarkMath, remarkBreaks, remarkSmartypants]}
+          rehypePlugins={[rehypeKatex /*, rehypeRaw*/]}
           components={{
             code: CodeBlock,
           }}
