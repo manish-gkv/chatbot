@@ -82,9 +82,8 @@ export default function Conversation() {
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                             />
-                            <div className="flex justify-end disabled:opacity-50 disabled:cursor-not-allowed" onClick={sendButtonHandler}
-                                disabled={loading}>
-                                <IoSend className="text-2xl cursor-pointer hover:text-gray-800 " />
+                            <div className="flex justify-end ">
+                                <button className="flex justify-end disabled:opacity-50 disabled:cursor-not-allowed" onClick={sendButtonHandler} disabled={loading}><IoSend className="text-2xl cursor-pointer hover:text-gray-800 " /></button>
                             </div>
                         </div>
 
