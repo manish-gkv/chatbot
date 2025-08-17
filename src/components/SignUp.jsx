@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useSignUpEmailPassword } from "@nhost/react";
+import { useSignUpEmailPassword, useSendVerificationEmail } from "@nhost/react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
     const [email, setEmail] = useState("");
+    const [mailSent, setMailSent] = useState(false);
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const { signUpEmailPassword,
@@ -13,18 +14,19 @@ export default function SignUp() {
         isSuccess,
         isError,
         error } = useSignUpEmailPassword();
-
+    const { sendEmail, isLoading:sendingMail, isSent } = useSendVerificationEmail();
     const handleSubmit = async (e) => {
         e.preventDefault();
         const result = await signUpEmailPassword( email, password );
-        console.log(result);
+
+        await sendEmail(email);
+        console.log(error)
         if(isError) {
             toast.error("Sign up failed", error);
         }
-        if(isSuccess) {
-            toast.success("Sign up successful");
-            toast.info("Redirecting to login...");
-            navigate("/login");
+        if(isSent) {
+            toast.info("Verification email sent! Please check your inbox.");
+            setMailSent(true);
         }
     };
 
@@ -34,6 +36,14 @@ export default function SignUp() {
                 <h2 className="text-xl font-bold mb-4 text-center">Sign Up</h2>
                 <p className="text-center text-gray-500 mb-4 ">Create a new account to start chatting.</p>
                 {isError && <p className="text-red-500 text-center mb-4">{error.message}</p>}
+                {mailSent ? (
+                    <div className="text-green-600 text-center font-semibold my-6">
+                        Verification email sent! Please check your inbox and verify your email address.<br/>
+                        <span className="text-gray-500 text-sm">After verification, you can <NavLink to="/login" className="text-blue-500">log in</NavLink>.</span>
+                        <br />
+                        <span className="text-gray-500 text-sm">If you haven't received it, please check your spam folder.</span>
+                    </div>
+                ) : (
                 <form className="space-y-4" onSubmit={handleSubmit}>
                     <div>
                         <label>
@@ -54,6 +64,7 @@ export default function SignUp() {
                         <p className="text-sm text-gray-500 mt-2">Already have an account? <NavLink to="/login" className="text-blue-500">Log in</NavLink></p>
                     </div>
                 </form>
+                )}
             </div></div>
     );
 }
