@@ -11,24 +11,14 @@ export default function SignUp() {
         isError,
         needsEmailVerification,
         error } = useSignUpEmailPassword();
-    const { sendEmail} = useSendVerificationEmail();
     const handleSubmit = async (e) => {
         e.preventDefault();
         const result = await signUpEmailPassword( email, password );
+        if(result.needsEmailVerification){
+            setMailSent(true);
+        }
     };
 
-    useEffect(() => {
-        const f = async () => {
-            if (needsEmailVerification) {
-                const result = await sendEmail(email);
-                if(result.isSent) {
-                    toast.info("Verification email sent! Please check your inbox.");
-                    setMailSent(true);
-                }
-            }
-        };
-        f();
-    }, [needsEmailVerification]);
     return (
         <div className="flex items-center justify-center min-h-screen">
             <div className="bg-white p-4 justify-between w-9/10 sm:w-7/10 md:w-1/3 mx-auto rounded shadow">
