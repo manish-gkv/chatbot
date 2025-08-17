@@ -15,7 +15,7 @@ export default function SignIn() {
         const result = await signInEmailPassword(email, password);
         console.log(result);
         if (needsEmailVerification) {
-            setNotVerified(true);
+            setNotVerified((prev) => true);
             toast.info("Please verify your email before signing in.");
             return;
         }

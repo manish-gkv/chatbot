@@ -29,7 +29,7 @@ export default function SignUp() {
             await sendEmail(email);
             if (isSent) {
             toast.info("Verification email sent! Please check your inbox.");
-            setMailSent(true);
+            setMailSent((prev) => true);
         }
         }
         
