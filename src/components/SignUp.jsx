@@ -15,17 +15,12 @@ export default function SignUp() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const result = await signUpEmailPassword( email, password );
-        console.log(result);
-        if(isError) {
-            toast.error("Sign up failed", error);
-        }
     };
 
     useEffect(() => {
         const f = async () => {
             if (needsEmailVerification) {
                 const result = await sendEmail(email);
-                console.log(result);
                 if(result.isSent) {
                     toast.info("Verification email sent! Please check your inbox.");
                     setMailSent(true);
