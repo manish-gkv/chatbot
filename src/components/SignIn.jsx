@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { useSignInEmailPassword } from '@nhost/react'
 import { toast } from "react-toastify";
 export default function SignIn() {
@@ -13,12 +13,6 @@ export default function SignIn() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const result = await signInEmailPassword(email, password);
-        console.log(result);
-        if (needsEmailVerification) {
-            setNotVerified((prev) => true);
-            toast.info("Please verify your email before signing in.");
-            return;
-        }
         if (isError) {
             setError(error.message);
             toast.error("Sign in failed", { autoClose: 3000 });
@@ -28,6 +22,14 @@ export default function SignIn() {
             navigate("/");
         }
     };
+
+    useEffect(() => {
+        if (needsEmailVerification) {
+        setNotVerified(true);
+        toast.info("Please verify your email before signing in.");
+    }
+}, [needsEmailVerification]);
+
     if (notVerified) {
         return (
             <div className="flex items-center justify-center min-h-screen text-center text-balance">
