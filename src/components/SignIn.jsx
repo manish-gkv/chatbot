@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useSignInEmailPassword } from '@nhost/react'
 import { toast } from "react-toastify";
 export default function SignIn() {
@@ -8,7 +8,7 @@ export default function SignIn() {
     const [notVerified, setNotVerified] = useState(false);
     const [Error, setError] = useState();
     const { signInEmailPassword, isLoading, isSuccess, isError, error, needsEmailVerification } = useSignInEmailPassword();
-
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -37,9 +37,7 @@ export default function SignIn() {
                     <h2 className="text-xl font-bold mb-4 text-center">Email Verification Required</h2>
                     <p className="text-center text-gray-500 mb-4">Please verify your email address before signing in.</p>
                     <p className="text-sm text-gray-500 mt-2">If you haven't received the verification email, please check your spam folder.</p>
-                    <p className="text-sm text-gray-500 mt-2">After verification, you can <NavLink to="/login" className="text-blue-500">log in</NavLink>.</p>
-                    
-
+                    <p className="text-sm text-gray-500 mt-2">After verification, you can <button onClick={() => window.location.reload()} className="text-blue-500 cursor-pointer">log in</button>.</p>
                 </div>
             </div>
         );
