@@ -28,7 +28,7 @@ export default function SignUp() {
                 {mailSent ? (
                     <div className="text-green-600 text-center font-semibold my-6">
                         Verification email sent! Please check your inbox and verify your email address.<br/>
-                        <span className="text-gray-500 text-sm">After verification, you can <NavLink to="/login" className="text-blue-500">log in</NavLink>.</span>
+                        <span className="text-gray-500 text-sm">After verification, you can <button onClick={() => window.location.reload()} className="text-blue-500 cursor-pointer">log in</button>.</span>
                         <br />
                         <span className="text-gray-500 text-sm">If you haven't received it, please check your spam folder.</span>
                     </div>
