@@ -50,7 +50,7 @@ export default function SignIn() {
         <div className="bg-white p-4 justify-between w-9/10 sm:w-7/10 md:w-1/3 mx-auto rounded shadow">
             <h2 className="text-xl font-bold mb-4 text-center">Sign In</h2>
             <p className="text-center text-gray-500 mb-4">Welcome back! Please enter your credentials.</p>
-            {Error && <p className="text-red-500 text-center mb-4">{error.message}</p>}
+            {Error && <p className="text-red-500 text-center mb-4">{error?.message}</p>}
             <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                     <label>

@@ -2,22 +2,20 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useSignUpEmailPassword, useSendVerificationEmail } from "@nhost/react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-
 export default function SignUp() {
     const [email, setEmail] = useState("");
     const [mailSent, setMailSent] = useState(false);
     const [password, setPassword] = useState("");
     const { signUpEmailPassword,
         isLoading,
-        isSuccess,
         isError,
         needsEmailVerification,
         error } = useSignUpEmailPassword();
-    const { sendEmail, isLoading:sendingMail, isSent, error:sendError } = useSendVerificationEmail();
+    const { sendEmail} = useSendVerificationEmail();
     const handleSubmit = async (e) => {
         e.preventDefault();
         const result = await signUpEmailPassword( email, password );
+        console.log(result);
         if(isError) {
             toast.error("Sign up failed", error);
         }
@@ -26,19 +24,16 @@ export default function SignUp() {
     useEffect(() => {
         const f = async () => {
             if (needsEmailVerification) {
-                const result = await sendEmail({email});
+                const result = await sendEmail(email);
+                console.log(result);
+                if(result.isSent) {
+                    toast.info("Verification email sent! Please check your inbox.");
+                    setMailSent(true);
+                }
             }
         };
         f();
     }, [needsEmailVerification]);
-
-    useEffect(() => {
-        if (isSent) {
-            toast.info("Verification email sent! Please check your inbox.");
-            setMailSent(true);
-        }
-    }, [isSent]);
-
     return (
         <div className="flex items-center justify-center min-h-screen">
             <div className="bg-white p-4 justify-between w-9/10 sm:w-7/10 md:w-1/3 mx-auto rounded shadow">
