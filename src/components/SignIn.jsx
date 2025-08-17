@@ -20,8 +20,8 @@ export default function SignIn() {
             return;
         }
         if (isError) {
-            setError(error);
-            toast.error("Sign in failed", error);
+            setError(error.message);
+            toast.error("Sign in failed", { autoClose: 3000 });
         }
         if (isSuccess) {
             toast.success("Sign in successful!");

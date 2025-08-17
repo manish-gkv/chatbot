@@ -14,20 +14,25 @@ export default function SignUp() {
         isSuccess,
         isError,
         error } = useSignUpEmailPassword();
-    const { sendEmail, isLoading:sendingMail, isSent } = useSendVerificationEmail();
+    const { sendEmail, isLoading:sendingMail, isSent, error:sendError } = useSendVerificationEmail();
     const handleSubmit = async (e) => {
         e.preventDefault();
         const result = await signUpEmailPassword( email, password );
 
-        await sendEmail(email);
-        console.log(error)
         if(isError) {
             toast.error("Sign up failed", error);
         }
-        if(isSent) {
+        if (sendError) {
+            toast.error("Failed to send verification email", sendError);
+        }
+        if(isSuccess){
+            await sendEmail(email);
+            if (isSent) {
             toast.info("Verification email sent! Please check your inbox.");
             setMailSent(true);
         }
+        }
+        
     };
 
     return (
